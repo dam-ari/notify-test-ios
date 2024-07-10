@@ -59,7 +59,15 @@ struct TimerSettingsView: View {
             .padding()
 
             Button("Schedule One-Time Notification") {
-                notificationManager.scheduleOneTimeNotification(interval: interval, unit: unit, title: "ontime", body: notificationBody)
+                notificationManager.scheduleOneTimeNotification(interval: 1, unit: TimeUnit.seconds, title: "This is me YOU", body: notificationBody)
+                successMessage = "One-time notification scheduled successfully!"
+                showSuccessMessage = true
+            }
+            .padding()
+            
+            Button("Schedule Immediate One-Time Notification") {
+//                let title = notificationTitle.com("Custom Interval Reminder") = "1" ? "This is me YOU" : notificationTitle
+                notificationManager.scheduleImmediateNotification(title: "This is me YOU", body: notificationBody)
                 successMessage = "One-time notification scheduled successfully!"
                 showSuccessMessage = true
             }
@@ -85,7 +93,6 @@ struct TimerSettingsView: View {
         }
     }
 }
-
 enum TimeUnit: String, CaseIterable {
     case seconds = "Seconds"
     case minutes = "Minutes"

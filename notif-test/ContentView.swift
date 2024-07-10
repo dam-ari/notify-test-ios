@@ -27,6 +27,8 @@ struct ContentView: View {
         .onAppear {
             // Force a re-render to ensure the latest data is fetched
             _ = notificationManager.notificationsSent
+            _ = notificationManager.currentInterval
+            _ = notificationManager.currentUnit
         }
     }
 }

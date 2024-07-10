@@ -9,11 +9,16 @@ import Foundation
 import SwiftUI
 import UserNotifications
 
-class NotificationManager: ObservableObject {
+class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterDelegate {
     @Published var notificationsSent: Int = 0
     @Published var currentInterval: Double?
     @Published var currentUnit: TimeUnit?
     private var notificationIdentifier: String?
+
+    override init() {
+        super.init()
+        UNUserNotificationCenter.current().delegate = self
+    }
 
     func requestNotificationPermission() {
         let center = UNUserNotificationCenter.current()
@@ -29,7 +34,7 @@ class NotificationManager: ObservableObject {
     }
 
     func scheduleNotification(interval: Double, unit: TimeUnit, title: String = "Custom Interval Reminder", body: String = "This is your reminder.") {
-        stopNotifications()  // Replaced cancelPreviousNotification with stopNotifications
+        stopNotifications()  // Stop all previous notifications
         
         let content = UNMutableNotificationContent()
         content.title = title
@@ -103,6 +108,12 @@ class NotificationManager: ObservableObject {
         }
     }
 
+    func scheduleImmediateNotification(title: String = "One-Time immediate Reminder", body: String = "This is your immediate notification.") {
+        // Set the time interval to 1 second for immediate delivery
+//        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        scheduleOneTimeNotification(interval: 1, unit: TimeUnit.seconds, title: title, body: body)
+    }
+    
     func stopNotifications() {
         let center = UNUserNotificationCenter.current()
         center.removeAllPendingNotificationRequests()
@@ -113,6 +124,15 @@ class NotificationManager: ObservableObject {
             self.currentUnit = nil
         }
     }
+    
+    // Handle notifications in the foreground
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner, .sound])
+    }
+    
+    
+    //TODO: private function that creates the noitification details, instead of repeating
+    
 }
 extension NotificationManager {
     func scheduleHourlyNotification() {
